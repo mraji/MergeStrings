@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Arrays;
+import java.lang.Math;
 
 public class MarouaneRaji {
 
@@ -43,8 +44,11 @@ public class MarouaneRaji {
 	static public class CSVOverlappingMerge implements TextParser {
 		public String parseLine(String line) {
 			LinkedList <String> csvList = new LinkedList <String> (Arrays.asList(line.split(";")));
-			mergeElement(csvList);
-			return csvList.get(0);
+			if(csvList.size() > 0){
+				mergeElement(csvList);
+				return csvList.get(0);
+			}
+			return "";
 		}
 
 		private void mergeElement(LinkedList <String> csvList) {
@@ -54,7 +58,7 @@ public class MarouaneRaji {
 
 				for (int i = 0; i < overlapArray.length; i++) {
 					overlapArray[i] = new StringMerge(csvList.get(0), csvList.get(i + 1));
-					if (overlapArray[maxOverlapIndex].getOverlap() < overlapArray[i].getOverlap()) {
+					if (Math.abs(overlapArray[maxOverlapIndex].getOverlap()) < Math.abs( overlapArray[i].getOverlap())) {
 						maxOverlapIndex = i;
 					}
 				}
@@ -66,14 +70,17 @@ public class MarouaneRaji {
 	}
 
 	/*
-	 * This class defines an object representing a two Strings merge.
+	 * This class defines an object representing a "two Strings" merge.
+	 * int overlap : 
+	 *		< 0 : if s2 preceeds s1
+	 *		> 0 : if s1 preceeds s2
+	 *		= 0 : if no elements in common.
 	 */
 	static class StringMerge {
 		private String s1;
 		private String s2;
-		private String commonString = "";
-		private int inverseOrder = 1;
 		private int overlap;
+		private String commonString = "";
 
 		StringMerge(String s1, String s2) {
 			this.s1 = s1;
@@ -83,8 +90,7 @@ public class MarouaneRaji {
 				String inverseOverlapString = getStringOrderedOverlapping(s2, s1);
 				if (overlapString.length() < inverseOverlapString.length()) {
 					this.commonString = inverseOverlapString;
-					this.inverseOrder = -1;
-					this.overlap = inverseOverlapString.length();
+					this.overlap = -inverseOverlapString.length();
 				} else {
 					this.commonString = overlapString;
 					this.overlap = overlapString.length();
@@ -98,21 +104,20 @@ public class MarouaneRaji {
 			return this.s2;
 		}
 		String getCommonString() {
-			return commonString;
+			return this.commonString;
 		}
 		int getOverlap() {
 			return this.overlap;
 		}
-
 		String computeMergedString() {
-			if (this.s1 != null && this.s2 != null && this.commonString != null) {
+			if (this.s1 != null && this.s2 != null) {
 				String firstString = this.s1;
 				String secondString = this.s2;
-				if (inverseOrder == -1) {
+				if (overlap < 0) {
 					firstString = this.s2;
 					secondString = this.s1;
 				}
-				return firstString + secondString.substring(this.commonString.length());
+				return firstString + secondString.substring(Math.abs(this.overlap));
 			}
 			return "";
 		}
