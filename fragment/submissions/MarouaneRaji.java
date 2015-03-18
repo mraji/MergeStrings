@@ -71,10 +71,10 @@ public class MarouaneRaji {
 
 	/*
 	 * This class defines an object representing a "two Strings" merge.
-	 * int overlap : 
-	 *		< 0 : if s2 preceeds s1
-	 *		> 0 : if s1 preceeds s2
-	 *		= 0 : if no elements in common.
+	 * int overlap is :
+	 *		< 0, if s2 preceeds s1
+	 *		> 0,  if s1 preceeds s2
+	 *		= 0,  if no elements are in common.
 	 */
 	static class StringMerge {
 		private String s1;
